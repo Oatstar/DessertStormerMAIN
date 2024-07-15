@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayerController : MonoBehaviour
 {
+
     public float moveSpeed = 5f; // Speed of the player movement
     private Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
@@ -11,6 +13,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject bulletPrefab;
     float bulletSpeed = 10f;
     Vector3 offsetVector = new Vector3(0, -0.2f,0);
+    GameObject hand;
+    SpriteRenderer handSpriteRenderer;
+    public Sprite defaultHandSprite;
+    public Sprite ShootHandSprite;
+
+    [SerializeField] int playerHealth = 10;
+    int maxPlayerHealth = 10;
+
+    private void Awake()
+    {
+        hand = transform.Find("Hand").gameObject;
+        handSpriteRenderer = hand.GetComponent<SpriteRenderer>();
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>(); // Get the Rigidbody component attached to the player
@@ -23,8 +39,9 @@ public class PlayerController : MonoBehaviour
     {
         DoMovement();
 
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0))
             Shoot();
+
     }
 
     void DoMovement()
@@ -49,21 +66,59 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.flipX = true;
         }
 
-        bool isMoving = movement.magnitude > 0;
+        bool isMoving = movement.magnitude > 0.05f;
         animator.SetBool("isMoving", isMoving);
+
+        if(isMoving)
+            AudioManager.instance.PlayWalkSound();
+
     }
 
     void Shoot()
     {
-
+        handSpriteRenderer.sprite = ShootHandSprite;
+        Invoke("RefreshHandSprite", 0.2f);
         // Instantiate the bullet
-        GameObject bullet = Instantiate(bulletPrefab, transform.position + offsetVector, Quaternion.identity);
+        GameObject bullet = Instantiate(bulletPrefab, hand.transform.position, Quaternion.identity);
 
         // Get the Rigidbody2D of the bullet
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
 
-        // Set the bullet's velocity based on the player's facing direction
-        float bulletDirection = spriteRenderer.flipX ? -1f : 1f;
-        bulletRb.velocity = new Vector2(bulletDirection * bulletSpeed, 0);
+        // Calculate the direction to the mouse position
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0; // Set z to 0 if your game is 2D
+
+        Vector2 direction = (mousePosition - transform.position).normalized;
+
+        // Set the bullet's velocity based on the direction to the mouse
+        bulletRb.velocity = direction * bulletSpeed;
+
+
+        //knockback to player
+        //float knockbackForce = 10f; // Adjust the force as needed
+        //rb.AddForce(-direction * knockbackForce, ForceMode2D.Impulse);
+
+        AudioManager.instance.PlayShootSplat();
     }
+
+
+    public void ReceiveDamage(int amount)
+    {
+        playerHealth -= amount;
+        UIManager.instance.RefreshHealthSlider(playerHealth);
+
+        if (playerHealth<=0)
+        {
+            
+            GameMasterManager.instance.PlayerDies();
+        }
+    }
+
+
+    void RefreshHandSprite()
+    {
+        handSpriteRenderer.sprite = defaultHandSprite;
+
+    }
+
 }

@@ -8,11 +8,19 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         if (collision.tag == "PlayerCharacter")
             return;
 
+        if(collision.tag == "Enemy")
+        {
+            collision.GetComponent<EnemyController>().ReceiveDamage(1);
+        }
+
         Instantiate(bulletExplosionPrefab, transform.position, Quaternion.identity);
         Debug.Log("Bullet collided with: " + collision.name);
+        AudioManager.instance.PlayHitSplat();
+
         Destroy(this.gameObject);
     }
 }

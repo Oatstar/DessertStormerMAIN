@@ -612,7 +612,27 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      randomia_0: 3430215441959146655
+      randomia_1: 437094196212379891
+      randomia_10: 1780493800134656603
+      randomia_11: -7431415963095202785
+      randomia_12: 2998036835594557595
+      randomia_13: 3578825471691002575
+      randomia_14: 5161967172503552727
+      randomia_15: -2622665947621579055
+      randomia_16: 4982776174725252799
+      randomia_17: -6129816902950211781
+      randomia_18: -1990221356453234101
+      randomia_19: -96519757175611254
+      randomia_2: -53456742045516121
+      randomia_3: -5243507463480593693
+      randomia_4: -5021573038475002454
+      randomia_5: -8232441707891552785
+      randomia_6: 1337518350940965564
+      randomia_7: 2094331813598557501
+      randomia_8: 1722703991035877476
+      randomia_9: 9043385158719596598
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
