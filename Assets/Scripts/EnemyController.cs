@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     public Slider healthSlider; // Reference to the health slider
     public float moveSpeed = 2f; // Speed of the enemy movement
     private int health = 10; // Enemy health
-
+    [SerializeField] float stoppingDistance = 0.5f;
     NavMeshAgent agent;
 
     private void Awake()
@@ -26,7 +26,7 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        agent.stoppingDistance = 0.5f;
+        agent.stoppingDistance = stoppingDistance;
 
         healthSlider.maxValue = health;
         healthSlider.value = health;
@@ -65,6 +65,7 @@ public class EnemyController : MonoBehaviour
 
         if (health <= 0)
         {
+            EnemySpawner.instance.EnemyDied(this.gameObject);
             Destroy(gameObject);
         }
     }

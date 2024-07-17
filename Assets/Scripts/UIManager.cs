@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     [SerializeField] Slider healthSlider;
+    [SerializeField] TMP_Text floorCounter;
 
     private void Awake()
     {
@@ -21,5 +22,10 @@ public class UIManager : MonoBehaviour
     public void RefreshHealthSlider(int healthValue)
     {
         healthSlider.value = healthValue;
+    }
+
+    public void RefreshFloorCounter(int floorCount)
+    {
+        floorCounter.text = "FLOOR: " + floorCount.ToString();
     }
 }

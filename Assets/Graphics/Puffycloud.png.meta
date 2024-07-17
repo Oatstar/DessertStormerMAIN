@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Puffycloud_0: -6234309389279610153
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
     SpriteRenderer handSpriteRenderer;
     public Sprite defaultHandSprite;
     public Sprite ShootHandSprite;
+    bool canAttack = true;
+    float attackInterval = 0.15f;
 
     [SerializeField] int playerHealth = 10;
     int maxPlayerHealth = 10;
@@ -32,11 +34,12 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>(); // Get the Rigidbody component attached to the player
         spriteRenderer = GetComponent<SpriteRenderer>(); // Get the SpriteRenderer component attached to the player
         animator = GetComponent<Animator>(); // Get the Animator component attached to the player
-
+        playerHealth = maxPlayerHealth;
     }
 
     void Update()
     {
+
         DoMovement();
 
         if (Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0))
@@ -71,15 +74,18 @@ public class PlayerController : MonoBehaviour
 
         if(isMoving)
             AudioManager.instance.PlayWalkSound();
-
     }
 
     void Shoot()
     {
+        if (!canAttack)
+            return;
+
         handSpriteRenderer.sprite = ShootHandSprite;
         Invoke("RefreshHandSprite", 0.2f);
         // Instantiate the bullet
         GameObject bullet = Instantiate(bulletPrefab, hand.transform.position, Quaternion.identity);
+        bullet.GetComponent<BulletController>().bulletType = "friendly";
 
         // Get the Rigidbody2D of the bullet
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
@@ -98,9 +104,17 @@ public class PlayerController : MonoBehaviour
         //float knockbackForce = 10f; // Adjust the force as needed
         //rb.AddForce(-direction * knockbackForce, ForceMode2D.Impulse);
 
+        StartCoroutine(ResetAttackInterval());
+
         AudioManager.instance.PlayShootSplat();
     }
 
+    IEnumerator ResetAttackInterval()
+    {
+        canAttack = false;
+        yield return new WaitForSeconds(attackInterval);
+        canAttack = true;
+    }
 
     public void ReceiveDamage(int amount)
     {
@@ -114,6 +128,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "NextMapTrigger")
+        {
+            Debug.Log("Triggering next map");
+            GameMasterManager.instance.EnterDoor();
+        }
+    }
 
     void RefreshHandSprite()
     {

@@ -6,6 +6,11 @@ TagManager:
   tags:
   - PlayerCharacter
   - Enemy
+  - Wall
+  - Door
+  - NextMapTrigger
+  - Obstacle
+  - Bullet
   layers:
   - Default
   - TransparentFX
